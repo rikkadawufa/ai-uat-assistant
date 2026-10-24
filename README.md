@@ -57,7 +57,7 @@ The model suggests severity and priority, but a named reviewer decides. If the r
 
 ## Running it
 
-This public version has the architecture, the workflow logic, and the tests. The n8n workflow exports, prompts, Docker setup, and setup guide aren't included. I can walk you through the full setup running live on a call.
+This public version has the architecture, the workflow logic, and the tests. The n8n workflow exports, prompts, Docker setup, and setup guide aren't included. They're part of what I set up in a client's own Azure DevOps project. Send me a message if you'd like to see more of how it works.
 
 Sample data is fictional (ShopEasy). This is a self-initiated portfolio project.
 
