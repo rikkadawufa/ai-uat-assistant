@@ -1,0 +1,6 @@
+.env
+story-map.json
+output/*
+!output/.gitkeep
+__pycache__/
+*.py[cod]

@@ -1,0 +1,1 @@
+"""ShopEasy UAT test package."""

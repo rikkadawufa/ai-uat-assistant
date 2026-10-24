@@ -1,0 +1,3 @@
+function maskSecrets(value) { return String(value ?? '').replace(/Bearer\s+[^\s]+/gi, 'Bearer ***').replace(/\bsk-[A-Za-z0-9_-]+/g, '***').replace(/\b(?:pat|ado_pat)\s*[=:]\s*[^\s]+/gi, '***'); }
+function formatAlert(payload = {}) { const workflow = payload.workflow || {}; const execution = payload.execution || {}; const message = maskSecrets(execution.error?.message || 'Unknown error'); const url = `http://localhost:5678/workflow/${workflow.id || ''}/executions/${execution.id || ''}`; return { text: `UAT workflow error\nWorkflow: ${workflow.name || workflow.id || 'unknown'}\nNode: ${execution.lastNodeExecuted || 'unknown'}\nError: ${message}\n${url}`, url }; }
+if (typeof module !== 'undefined') module.exports = { formatAlert, maskSecrets };

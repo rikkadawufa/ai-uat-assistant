@@ -1,0 +1,16 @@
+function escapeHtml(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+const options = (current, values) => values.map((value) => `<option${String(value) === String(current) ? ' selected' : ''}>${escapeHtml(value)}</option>`).join('');
+
+function buildReviewPage({ runId, drafts = [], resumeUrl }) {
+  const cards = drafts.map((draft) => {
+    const key = escapeHtml(draft.dedupKey);
+    const criteria = (draft.story?.acceptanceCriteria || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+    const context = `<p class="meta">${escapeHtml(draft.storyKey || '')}${draft.story?.title ? ` · ${escapeHtml(draft.story.title)}` : ''}${draft.caseId ? ` · Test case ${escapeHtml(draft.caseId)}` : ''}</p>${criteria ? `<p class="label">Acceptance criteria</p><ol class="ac">${criteria}</ol>` : ''}`;
+    const evidence = `${context}<p class="label">Failure</p><p class="error">${escapeHtml(draft.errorMessage)}</p><details><summary>Full trace</summary><pre>${escapeHtml(String(draft.stackTrace || '').split('\n').slice(0, 15).join('\n'))}</pre></details><p><a href="${escapeHtml(draft.runUrl || '')}">Test run</a>${draft.storyId ? ` · <a href="${escapeHtml(draft.storyUrl || '')}">Story</a>` : ' · <strong>Traceability missing</strong>'}</p>`;
+    if (draft.status === 'needs_human') return `<article><h2>${escapeHtml(draft.title || draft.dedupKey)}</h2>${evidence}<p><strong>Manual bug creation required:</strong> ${escapeHtml((draft.errors || []).join('; '))}</p></article>`;
+    return `<article><h2>${escapeHtml(draft.title)}</h2>${evidence}<label>Title <input name="title__${key}" value="${escapeHtml(draft.title)}"></label><label>Severity <select name="severity__${key}">${options(draft.suggestedSeverity, ['1 - Critical', '2 - High', '3 - Medium', '4 - Low'])}</select></label><label>Priority <select name="priority__${key}">${options(draft.suggestedPriority, [1, 2, 3, 4])}</select></label><label>Repro steps <textarea name="repro__${key}">${escapeHtml((draft.reproSteps || []).join('\n'))}</textarea></label><label><input type="radio" name="decision__${key}" value="approve"> Approve</label><label><input type="radio" name="decision__${key}" value="reject"> Reject</label></article>`;
+  }).join('\n');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>ShopEasy defect review</title><style>body{font:16px system-ui;max-width:900px;margin:2rem auto;background:#f5f7fb}article{background:#fff;padding:1rem;margin:1rem 0;border-radius:8px}label{display:block;margin:.7rem 0}input,select,textarea{width:100%;box-sizing:border-box}input[type=radio]{width:auto;margin-right:.4rem}textarea{min-height:6rem}pre{white-space:pre-wrap}.meta,.label{color:#5c6662;margin:.3rem 0}.label{font-weight:600}.ac{margin:.3rem 0 .8rem}.error{font-family:monospace;background:#fdf3f2;padding:.5rem;border-radius:4px}</style></head><body><h1>Defect review — run #${escapeHtml(runId)}</h1><form method="POST" action="${escapeHtml(resumeUrl)}" enctype="application/x-www-form-urlencoded">${cards}<label>Reviewer <input required name="reviewer"></label><button type="submit">Submit review</button></form></body></html>`;
+}
+
+if (typeof module !== 'undefined') module.exports = { buildReviewPage, escapeHtml };

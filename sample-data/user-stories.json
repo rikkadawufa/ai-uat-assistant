@@ -1,0 +1,63 @@
+[
+  {
+    "key": "US-CART-01",
+    "title": "Add items to cart",
+    "story": "As a shopper, I want to add products to my cart so that I can buy several items in one order.",
+    "acceptance_criteria": [
+      "Adding an in-stock product increases the cart line quantity by the selected amount.",
+      "Quantity per line is limited to 1-10.",
+      "Out-of-stock products cannot be added and show a clear message."
+    ]
+  },
+  {
+    "key": "US-CART-02",
+    "title": "Apply a discount code",
+    "story": "As a shopper, I want to apply a discount code so that I get the advertised price.",
+    "acceptance_criteria": [
+      "A valid percentage code reduces the subtotal by that percentage.",
+      "Expired codes are rejected with the message 'This code has expired'.",
+      "Only one code can be applied per order.",
+      "Codes are case-insensitive."
+    ]
+  },
+  {
+    "key": "US-CHK-03",
+    "title": "Calculate shipping",
+    "story": "As a shopper, I want to see the shipping cost before paying so that there are no surprises.",
+    "acceptance_criteria": [
+      "Orders of $50.00 or more ship free.",
+      "Orders under $50.00 pay a flat $5.99.",
+      "The free-shipping threshold uses the subtotal after discounts."
+    ]
+  },
+  {
+    "key": "US-CHK-04",
+    "title": "Calculate sales tax",
+    "story": "As a shopper, I want tax calculated correctly for my state so that my total is accurate.",
+    "acceptance_criteria": [
+      "Tax is applied to the discounted subtotal, not to shipping.",
+      "Tax is rounded half-up to 2 decimal places.",
+      "Unsupported states block checkout with a clear message."
+    ]
+  },
+  {
+    "key": "US-CHK-05",
+    "title": "Place an order",
+    "story": "As a shopper, I want to place my order so that I receive a confirmation number.",
+    "acceptance_criteria": [
+      "A successful order returns a confirmation number in the format SE-XXXXXX.",
+      "An empty cart cannot be checked out.",
+      "Stock is reduced only after payment succeeds."
+    ]
+  },
+  {
+    "key": "US-CHK-06",
+    "title": "Pay with saved card",
+    "story": "As a returning shopper, I want to pay with a saved card so that checkout is faster.",
+    "acceptance_criteria": [
+      "Saved cards show only the brand and last 4 digits.",
+      "Expired saved cards cannot be selected.",
+      "A declined payment keeps the cart intact and shows the decline reason."
+    ]
+  }
+]

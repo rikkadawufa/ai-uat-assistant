@@ -1,0 +1,10 @@
+function escapeHtml(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function buildReport(metrics, summary, source = 'llm') {
+  const emoji = { GREEN: '🟢', AMBER: '🟡', RED: '🔴' }[metrics.readiness] || '⚪';
+  const issues = (metrics.criticalIssues || []).map((issue) => `<li>${escapeHtml(issue.severity)} — ${escapeHtml(issue.title)}</li>`).join('') || '<li>None</li>';
+  const outstanding = [...(metrics.outstanding?.blocked || []), ...(metrics.outstanding?.untestedStories || []), ...(metrics.outstanding?.missingAcceptanceCriteria || [])].map((item) => `<li>${escapeHtml(item)}</li>`).join('') || '<li>None</li>';
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>ShopEasy UAT report</title><style>body{font:16px system-ui;max-width:900px;margin:2rem auto}table{border-collapse:collapse}td,th{padding:.5rem;border:1px solid #ddd}</style></head><body><h1>${emoji} ${escapeHtml(summary.headline)}</h1><p>${escapeHtml(summary.summary)}</p><p>Summary source: ${escapeHtml(source)}</p><table><tr><th>Total</th><th>Passed</th><th>Failed</th><th>Blocked</th><th>Pass rate</th><th>Execution progress</th></tr><tr><td>${metrics.total}</td><td>${metrics.passed}</td><td>${metrics.failed}</td><td>${metrics.blocked}</td><td>${metrics.passRate}%</td><td>${metrics.executionProgress}%</td></tr></table><h2>Critical issues</h2><ul>${issues}</ul><h2>Outstanding</h2><ul>${outstanding}</ul><p><a href="${escapeHtml(metrics.runUrl || '')}">Open test run</a></p></body></html>`;
+  const blocks = [{ type: 'header', text: { type: 'plain_text', text: `${emoji} ${summary.headline}` } }, { type: 'section', text: { type: 'mrkdwn', text: summary.summary } }, { type: 'section', fields: [{ type: 'mrkdwn', text: `*Total*\n${metrics.total}` }, { type: 'mrkdwn', text: `*Passed*\n${metrics.passed}` }, { type: 'mrkdwn', text: `*Failed*\n${metrics.failed}` }, { type: 'mrkdwn', text: `*Blocked*\n${metrics.blocked}` }] }];
+  return { html, blocks };
+}
+if (typeof module !== 'undefined') module.exports = { buildReport, escapeHtml };
